@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
+import addNotification from 'react-push-notification';
+
+
 import './App.css'
 function App() {
   const [platform, setPlatform] = useState("facebook")
@@ -10,28 +13,6 @@ function App() {
   const [loading, setLoading] = useState(false)
 
   const [comments, setComments] = useState([]);
-  // const [comments, setComments] = useState([
-  //   {
-  //     "facebookUrl": "https://www.facebook.com/cisco/posts/pfbid037qCpjyKGtHmR27P7FTeHkLM5yaCBYHGGCm1nRyGMbM9xGwuoeeUCciwTTvZ6qrtZl",
-  //     "commentUrl": "https://www.facebook.com/cisco/posts/pfbid037qCpjyKGtHmR27P7FTeHkLM5yaCBYHGGCm1nRyGMbM9xGwuoeeUCciwTTvZ6qrtZl?comment_id=1429848010948513",
-  //     "id": "Y29tbWVudDo5NjI1NTc3MjE4OTQzNjNfMTQyOTg0ODAxMDk0ODUxMw==",
-  //     "feedbackId": "ZmVlZGJhY2s6OTYyNTU3NzIxODk0MzYzXzE0Mjk4NDgwMTA5NDg1MTM=",
-  //     "date": "2024-03-08T10:12:10.000Z",
-  //     "text": "Salute",
-  //     "profileUrl": "https://www.facebook.com/people/Marlon-Figueredo/100093298181468/",
-  //     "profilePicture": "https://scontent-dfw5-2.xx.fbcdn.net/v/t39.30808-1/352199312_743752320821306_6435057811716869041_n.jpg?stp=cp0_dst-jpg_p32x32&_nc_cat=102&ccb=1-7&_nc_sid=5f2048&_nc_ohc=rrk_OtH2KvEAX_Vao4M&_nc_ht=scontent-dfw5-2.xx&oh=00_AfC5wqKS6TBhP8IBPoYQ-fSrTKPmAKM2RMf3JzKxzxX3EA&oe=65F2EFF2",
-  //     "profileId": "100093298181468",
-  //     "profileName": "Marlon Figueredo",
-  //     "likesCount": 1,
-  //     "commentsCount": 1,
-  //     "facebookId": "962557721894363",
-  //     "postTitle": "In honor of #IWD, Cisco’s Chief Sustainability Officer, Mary de Wysocki, reflects on how women’s leadership and creativity in the climate innovation space helps us build resilient ecosystems. Read more: http://cs.co/6183XYvJh",
-  //     "pageAdLibrary": {
-  //       "is_business_page_active": false,
-  //       "id": "10084673031"
-  //     }
-  //   }
-  // ]);
 
   const fetchComments = (link) => {
     // Fetch comments data for a specific link
@@ -44,6 +25,17 @@ function App() {
       .catch(error => {
         console.error('Error fetching comments:', error);
       });
+  };
+
+    const senti=(score)=>{
+    if (score < -0.1) 
+    alert("Negative");
+    addNotification({
+        title: 'Negative',
+        native:true        
+      })
+    
+    
   };
 
   return (
@@ -87,14 +79,14 @@ function App() {
             });
         }}>submit</button>
       </div>
-      <div className="">
+      <div className="main">
         {
           posts.length != 0 && (
             <>
               <img src={posts[0].user.profilePic} alt="" />
-              <div className="">Page Name: {posts[0].pageName}</div>
-              <div className="">facebook Url: <a href={posts[0].facebookUrl} target='_blank'>{posts[0].facebookUrl}</a></div>
-              <div className="">Name: {posts[0].user.name}</div>
+              <div className="main-page">Page Name: {posts[0].pageName}</div>
+              <div className="main-url">facebook Url: <a href={posts[0].facebookUrl} target='_blank'>{posts[0].facebookUrl}</a></div>
+              <div className="main-post">Name: {posts[0].user.name}</div>
 
             </>
           )
@@ -113,17 +105,17 @@ function App() {
         {posts.map((post) => (
           <tr key={post.postId}>
             <td><img src={post.media && post.media[0].thumbnail} /></td>
-            <td>{post.text}</td>
-            <td>{post.likes}</td>
-            <td>{post.comments}</td>
-            <td>{post.shares}</td>
-            <button onClick={() => fetchComments(post.url)}>View Comments</button>
+            <td className='post-text'>{post.text}</td>
+            <td className='post-likes'>{post.likes}</td>
+            <td className='post-comments'>{post.comments}</td>
+            <td className='post-shares'>{post.shares}</td>
+            <button className='comment' onClick={() => fetchComments(post.url)}>View Comments</button>
           </tr>
         ))}
       </table>
       <h1>Comments</h1>
       <table>
-        <tr>
+        <tr className='com'>
           <th>profileName</th>
           <th>Profile Pic</th>
           <th>Content</th>
@@ -139,6 +131,7 @@ function App() {
             <td>{comment.likesCount}</td>
             <td>{comment.commentsCount}</td>
             <td>{comment.score}</td>
+            <button onClick={()=>senti(comment.score)}>Analyze</button>
           </tr>
         ))}
       </table>
